@@ -7,8 +7,9 @@ import java.util.concurrent.Semaphore;
 public class MyMap implements Map {
 
     int size;
+    int permits;
     MyObject[] obj;
-    private static final Semaphore semaphore = new Semaphore(1);
+    private final Semaphore semaphore = new Semaphore(permits);
 
     public MyMap(int s)
     {
@@ -23,15 +24,26 @@ public class MyMap implements Map {
 
     @Override
     public boolean isEmpty() {
-        for (int i = 0; i < size; i++) {
-            if(obj[i] != null)
-            {
-                return false;
+        this.permits =+ 1;
+        System.out.println(this.permits);
+        //System.out.println(semaphore.availablePermits());
+        try {
+            semaphore.acquire();
+            for (int i = 0; i < size; i++) {
+                if(obj[i] != null)
+                {
+                    return false;
+                }
+                else{
+                    return true;
+                }
             }
-            else{
-                return true;
-            }
+            semaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        this.permits = this.permits + 1;
+        System.out.println(this.permits);
         return false;
     }
 
@@ -52,6 +64,7 @@ public class MyMap implements Map {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.permits++;
         return false;
     }
 
@@ -72,6 +85,7 @@ public class MyMap implements Map {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.permits++;
         return false;
     }
 
@@ -92,6 +106,7 @@ public class MyMap implements Map {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.permits++;
         return null;
     }
 
@@ -100,15 +115,14 @@ public class MyMap implements Map {
         try {
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i].getValue() != o && obj[i].getKey() != o2 && obj[i] == null)
-                {
-                    obj[i].setKey(o);
-                    obj[i].setValue(o2);
+//                if(obj[i].getValue() != o && obj[i].getKey() != o2 && obj[i] == null)
+//                {
+                    obj[i] = new MyObject(o, o2);
                     return obj[i];
-                }
-                else{
-                    return null;
-                }
+//                }
+//                else{
+//                    return null;
+//                }
             }
             semaphore.release();
         } catch (InterruptedException e) {
@@ -134,6 +148,7 @@ public class MyMap implements Map {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.permits++;
         return null;
     }
 
@@ -144,13 +159,14 @@ public class MyMap implements Map {
             for (int i = 0; i < size; i++) {
                 if(obj[i] != map)
                 {
-                     = map;
+                     //= map;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.permits++;
     }
 
     @Override
