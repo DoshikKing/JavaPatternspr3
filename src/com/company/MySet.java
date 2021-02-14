@@ -1,73 +1,86 @@
 package com.company;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
-public class MySet<E> extends TreeSet {
+public class MySet<E> implements Set {
+
+    List<Object> col = new ArrayList();
+
     @Override
-    synchronized public int size() {
-        return super.size();
+    synchronized public int size()
+    {
+        return col.size();
     }
 
     @Override
     synchronized public boolean isEmpty() {
-        return super.isEmpty();
+        for (Object o : col) {
+            if (o != null)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     synchronized public boolean contains(Object o) {
-        return super.contains(o);
+        for (Object k: col) {
+            if (k == o)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     synchronized public Iterator iterator() {
-        return super.iterator();
+        return col.iterator();
     }
 
     @Override
     synchronized public Object[] toArray() {
-        return super.toArray();
+        return col.toArray();
     }
 
     @Override
     synchronized public boolean add(Object o) {
-        return super.add(o);
+        return col.add(o);
     }
 
     @Override
     synchronized public boolean remove(Object o) {
-        return super.remove(o);
+        return col.remove(o);
     }
 
     @Override
     synchronized public boolean addAll(Collection collection) {
-        return super.addAll(collection);
+        return col.addAll(collection);
     }
 
     @Override
     public void clear() {
-        super.clear();
+        col.clear();
     }
 
     @Override
     synchronized public boolean removeAll(Collection collection) {
-        return super.removeAll(collection);
+        return col.removeAll(collection);
     }
 
     @Override
     synchronized public boolean retainAll(Collection collection) {
-        return super.retainAll(collection);
+        return col.retainAll(collection);
     }
 
     @Override
     synchronized public boolean containsAll(Collection collection) {
-        return super.containsAll(collection);
+        return col.containsAll(collection);
     }
 
     @Override
     synchronized public Object[] toArray(Object[] objects) {
-        return super.toArray();
+        return col.toArray();
     }
 }
