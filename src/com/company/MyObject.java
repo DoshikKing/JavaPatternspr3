@@ -1,6 +1,6 @@
 package com.company;
 
-public class MyObject {
+public class MyObject<E> {
     Object key;
     Object value;
 

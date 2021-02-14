@@ -3,70 +3,71 @@ package com.company;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
-public class MySet implements Set {
+public class MySet<E> extends TreeSet {
     @Override
-    public int size() {
-        return 0;
+    synchronized public int size() {
+        return super.size();
     }
 
     @Override
     synchronized public boolean isEmpty() {
-        return false;
+        return super.isEmpty();
     }
 
     @Override
     synchronized public boolean contains(Object o) {
-        return false;
+        return super.contains(o);
     }
 
     @Override
-    public Iterator iterator() {
-        return null;
+    synchronized public Iterator iterator() {
+        return super.iterator();
     }
 
     @Override
     synchronized public Object[] toArray() {
-        return new Object[0];
+        return super.toArray();
     }
 
     @Override
     synchronized public boolean add(Object o) {
-        return false;
+        return super.add(o);
     }
 
     @Override
     synchronized public boolean remove(Object o) {
-        return false;
+        return super.remove(o);
     }
 
     @Override
-    public boolean addAll(Collection collection) {
-        return false;
+    synchronized public boolean addAll(Collection collection) {
+        return super.addAll(collection);
     }
 
     @Override
     public void clear() {
-
+        super.clear();
     }
 
     @Override
     synchronized public boolean removeAll(Collection collection) {
-        return false;
+        return super.removeAll(collection);
     }
 
     @Override
     synchronized public boolean retainAll(Collection collection) {
-        return false;
+        return super.retainAll(collection);
     }
 
     @Override
     synchronized public boolean containsAll(Collection collection) {
-        return false;
+        return super.containsAll(collection);
     }
 
     @Override
-    public Object[] toArray(Object[] objects) {
-        return new Object[0];
+    synchronized public Object[] toArray(Object[] objects) {
+        return super.toArray();
     }
 }

@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
-public class MyMap implements Map {
+public class MyMap<E> implements Map {
 
     int size;
     int permits = 1;
@@ -178,7 +178,18 @@ public class MyMap implements Map {
 
     @Override
     public Set keySet() {
-        return null;
+        Set<Object> set = new HashSet<Object>();
+        try {
+            semaphore.acquire();
+            for (int i = 0; i < size; i++) {
+                set.add(obj[i].getKey());
+            }
+            semaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.permits++;
+        return set;
     }
 
     @Override
@@ -199,6 +210,17 @@ public class MyMap implements Map {
 
     @Override
     public Set<Entry> entrySet() {
-        return null;
+        Set<Entry> set = new HashSet<Entry>();
+        try {
+            semaphore.acquire();
+            for (int i = 0; i < size; i++) {
+                //set.add(i);
+            }
+            semaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.permits++;
+        return set;
     }
 }
