@@ -9,166 +9,201 @@ public class MyMap<E> implements Map {
     int size;
     int permits = 1;
     MyObject[] obj;
-    private final Semaphore semaphore = new Semaphore(permits);
+    //private final Semaphore semaphore = new Semaphore(permits);
 
     public MyMap(int s)
     {
         this.size = s;
         MyObject[] obj = new MyObject[s];
-        obj[0] = new MyObject(" ", " ");
         this.obj = obj;
     }
     @Override
     public int size() {
-        return size;
+        int count = 0;
+        try {
+            Semaphore semaphore = new Semaphore(permits);
+            semaphore.acquire();
+            for (int i = 0; i < size; i++) {
+                if(obj[i] != null)
+                {
+                    count = count + 1;
+                }
+            }
+            semaphore.release();
+        } catch (InterruptedException e) {
+            count = 0;
+            e.printStackTrace();
+        }finally {
+            permits++;
+        }
+        return count;
     }
 
     @Override
     public boolean isEmpty() {
-        this.permits =+ 1;
-        //System.out.println(this.permits);
-        //System.out.println(semaphore.availablePermits());
+        boolean b = true;
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i] != null && obj[i].getKey() != " " && obj[i].getValue() != " ")
+                if(obj[i] != null)
                 {
-                    return false;
-                }
-                else{
-                    return true;
+                    b = false;
+                    break;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
+            b = true;
             e.printStackTrace();
+        }finally {
+            permits++;
         }
-        this.permits = this.permits + 1;
-        System.out.println(this.permits);
-        return false;
+        return b;
     }
 
     @Override
-    public boolean containsKey(Object o) {
+    public boolean containsKey(Object k) {
+        boolean b = false;
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i].getKey() != o)
+                if(obj[i].getKey() == k)
                 {
-                    return false;
-                }
-                else{
-                    return true;
+                    b = true;
+                    break;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
+            b = false;
             e.printStackTrace();
+        }finally {
+            permits++;
         }
-        this.permits++;
-        return false;
+        return b;
     }
 
     @Override
-    public boolean containsValue(Object o) {
+    public boolean containsValue(Object v) {
+        boolean b = false;
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i].getValue() != o)
+                if(obj[i].getValue() == v)
                 {
-                    return false;
-                }
-                else{
-                    return true;
+                    b = true;
+                    break;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
+            b = false;
             e.printStackTrace();
         }
-        this.permits++;
-        return false;
+        finally {
+            permits++;
+        }
+        return b;
     }
 
     @Override
-    public Object get(Object o) {
+    public Object get(Object k) {
+        Object temp = null;
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i] != o)
+                if(obj[i] != null && obj[i].getKey() == k)
                 {
-                    return null;
-                }
-                else{
-                    return obj[i];
+                    temp = obj[i].getValue();
+                    break;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
+            temp = null;
             e.printStackTrace();
         }
-        this.permits++;
-        return null;
+        finally {
+            permits++;
+        }
+        return temp;
     }
 
     @Override
-    public Object put(Object o, Object o2) {
+    public Object put(Object k, Object o) {
+        int permits = 1;
+        MyObject temp = new MyObject(k, o);
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i].getValue() != o && obj[i].getKey() != o2 && obj[i] == null)
+                if(obj[i] == null)
                 {
-                    obj[i] = new MyObject(o, o2);
-                    return obj[i];
+                    obj[i] = temp;
+                    break;
                 }
-                else{
-                    return null;
+                if(obj[i].getKey() == k)
+                {
+                    obj[i] = temp;
+                    break;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
+            temp = null;
             e.printStackTrace();
+        } finally {
+            permits++;
         }
-        return null;
+        return temp;
     }
 
     @Override
-    public Object remove(Object o) {
+    public Object remove(Object k) {
+        MyObject o = null;
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i] != o)
+                if(obj[i] != null && obj[i].getKey() == k)
                 {
-                    return null;
-                }
-                else{
+                    o = obj[i];
                     obj[i] = null;
+                    break;
                 }
             }
             semaphore.release();
         } catch (InterruptedException e) {
+            o = null;
             e.printStackTrace();
+        }finally {
+            permits++;
         }
-        this.permits++;
-        return null;
+        return o;
     }
 
     @Override
     public void putAll(Map map) {
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
-            for (int i = 0; i < size; i++) {
-                if(obj[i] != map)
-                {
-                    //obj[i] = map.values();
-                     //= map;
-                }
+            Set<Object> key = map.keySet();
+
+            for (Object k : key) {
+                Object o = map.get(k);
+                this.put(k,o);
             }
             semaphore.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.permits++;
+        finally {
+            permits++;
+        }
     }
 
     @Override
@@ -178,8 +213,10 @@ public class MyMap<E> implements Map {
 
     @Override
     public Set keySet() {
+
         Set<Object> set = new HashSet<Object>();
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
                 set.add(obj[i].getKey());
@@ -188,7 +225,9 @@ public class MyMap<E> implements Map {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.permits++;
+        finally {
+            permits++;
+        }
         return set;
     }
 
@@ -196,6 +235,7 @@ public class MyMap<E> implements Map {
     public Collection values() {
         List <Object> list1= new ArrayList();
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
                 list1.add(obj[i].getValue());
@@ -204,7 +244,9 @@ public class MyMap<E> implements Map {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.permits++;
+        finally {
+            permits++;
+        }
         return list1;
     }
 
@@ -212,15 +254,18 @@ public class MyMap<E> implements Map {
     public Set<Entry> entrySet() {
         Set<Entry> set = new HashSet<Entry>();
         try {
+            Semaphore semaphore = new Semaphore(permits);
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                //set.add(i);
+                set.add(obj[i]);
             }
             semaphore.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.permits++;
+        finally {
+            permits++;
+        }
         return set;
     }
 }

@@ -1,6 +1,8 @@
 package com.company;
 
-public class MyObject<E> {
+import java.util.Map;
+
+public class MyObject implements Map.Entry {
     Object key;
     Object value;
 
@@ -14,8 +16,9 @@ public class MyObject<E> {
         this.key = key;
     }
 
-    public void setValue(Object value) {
+    public Object setValue(Object value) {
         this.value = value;
+        return value;
     }
 
     public Object getKey() {
