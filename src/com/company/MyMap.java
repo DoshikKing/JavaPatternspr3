@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 public class MyMap implements Map {
 
     int size;
-    int permits;
+    int permits = 1;
     MyObject[] obj;
     private final Semaphore semaphore = new Semaphore(permits);
 
@@ -15,6 +15,7 @@ public class MyMap implements Map {
     {
         this.size = s;
         MyObject[] obj = new MyObject[s];
+        obj[0] = new MyObject(" ", " ");
         this.obj = obj;
     }
     @Override
@@ -25,12 +26,12 @@ public class MyMap implements Map {
     @Override
     public boolean isEmpty() {
         this.permits =+ 1;
-        System.out.println(this.permits);
+        //System.out.println(this.permits);
         //System.out.println(semaphore.availablePermits());
         try {
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-                if(obj[i] != null)
+                if(obj[i] != null && obj[i].getKey() != " " && obj[i].getValue() != " ")
                 {
                     return false;
                 }
@@ -115,14 +116,14 @@ public class MyMap implements Map {
         try {
             semaphore.acquire();
             for (int i = 0; i < size; i++) {
-//                if(obj[i].getValue() != o && obj[i].getKey() != o2 && obj[i] == null)
-//                {
+                if(obj[i].getValue() != o && obj[i].getKey() != o2 && obj[i] == null)
+                {
                     obj[i] = new MyObject(o, o2);
                     return obj[i];
-//                }
-//                else{
-//                    return null;
-//                }
+                }
+                else{
+                    return null;
+                }
             }
             semaphore.release();
         } catch (InterruptedException e) {
@@ -159,6 +160,7 @@ public class MyMap implements Map {
             for (int i = 0; i < size; i++) {
                 if(obj[i] != map)
                 {
+                    //obj[i] = map.values();
                      //= map;
                 }
             }
@@ -171,7 +173,7 @@ public class MyMap implements Map {
 
     @Override
     public void clear() {
-
+        this.obj = null;
     }
 
     @Override
@@ -181,7 +183,18 @@ public class MyMap implements Map {
 
     @Override
     public Collection values() {
-        return null;
+        List <Object> list1= new ArrayList();
+        try {
+            semaphore.acquire();
+            for (int i = 0; i < size; i++) {
+                list1.add(obj[i].getValue());
+            }
+            semaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.permits++;
+        return list1;
     }
 
     @Override

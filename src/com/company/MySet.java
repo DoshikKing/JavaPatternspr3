@@ -51,17 +51,17 @@ public class MySet implements Set {
     }
 
     @Override
-    public boolean removeAll(Collection collection) {
+    synchronized public boolean removeAll(Collection collection) {
         return false;
     }
 
     @Override
-    public boolean retainAll(Collection collection) {
+    synchronized public boolean retainAll(Collection collection) {
         return false;
     }
 
     @Override
-    public boolean containsAll(Collection collection) {
+    synchronized public boolean containsAll(Collection collection) {
         return false;
     }
 
