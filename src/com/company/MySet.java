@@ -14,24 +14,12 @@ public class MySet<E> implements Set {
 
     @Override
     synchronized public boolean isEmpty() {
-        for (Object o : col) {
-            if (o != null)
-            {
-                return false;
-            }
-        }
-        return true;
+        return col.isEmpty();
     }
 
     @Override
     synchronized public boolean contains(Object o) {
-        for (Object k: col) {
-            if (k == o)
-            {
-                return true;
-            }
-        }
-        return false;
+        return col.contains(o);
     }
 
     @Override
